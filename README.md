@@ -5,7 +5,7 @@ This project demonstrates an end-to-end deep learning pipeline for text processi
 ---
 
 ## Project Structure
-
+```
 
 project-root/
 ├── app.py                   # Streamlit app
@@ -16,7 +16,7 @@ project-root/
 ├──data/                     # Folder containing raw dataset files (not included in repo)
 └── models/                  # Folder containing pre-trained model files (not included in repo)
 
-
+````
 ---
 
 ## Setup Instructions
