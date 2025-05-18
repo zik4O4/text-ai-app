@@ -13,7 +13,7 @@ project-root/
 ├── model_trainer.ipynb      # Notebook to train the model
 ├── requirements.txt         # Python dependencies
 ├── README.md                # This file
-├──data/                     # Folder containing raw dataset files (not included in repo)
+├── data/                    # Folder containing raw dataset files (not included in repo)
 └── models/                  # Folder containing pre-trained model files (not included in repo)
 
 ````
@@ -23,40 +23,40 @@ project-root/
 
 1. **Clone the repository**
 
-
+```bash
 git clone https://github.com/zik4O4/text-ai-app/.git
 cd your-repo-name
-
+````
 
 2. **Install dependencies**
 
-
+```bash
 pip install -r requirements.txt
-
+````
 
 3. **Prepare the data**
 
 Run the data processing notebook or script to prepare the dataset:
 
-
+```bash
 # Option 1: Run the Jupyter notebook interactively
 jupyter notebook data_processor.ipynb
 
 # Option 2: Run the Python script (if available)
 python data_processor.py
-
+```
 
 4. **Train the model (optional)**
 
 If you want to train the model yourself, run the training notebook or script:
 
-
+```bash
 jupyter notebook model_trainer.ipynb
 # or
 python model_trainer.py
+```
 
-
-> **Note:** Training can be time-consuming. Pre-trained models are available for download (see below).
+> **Note:** Training can be time-consuming. raw dataset file and Pre-trained models are available for download (see below).
 
 ---
 
@@ -71,7 +71,7 @@ The pre-trained model files (~1GB) are available here:
 1. Download and extract the models folder to the root directory of the project.
 2. Ensure the folder structure looks like:
 
-
+```
 project-root/
 ├── app.py
 ├── models/
@@ -85,7 +85,7 @@ project-root/
 │     └── ...
 │  └── ... 
 │   
-
+```
 
 ---
 
@@ -93,9 +93,9 @@ project-root/
 
 Once dependencies are installed and models are in place, start the app with:
 
-
+```bash
 streamlit run app.py
-
+```
 
 Open your browser to the local URL provided to interact with the app.
 
@@ -103,15 +103,14 @@ Open your browser to the local URL provided to interact with the app.
 
 ## Additional Notes
 
-* The project uses Hugging Face Transformers and PyTorch for NLP tasks such as text summarization, classification, translation or generation.
+* The project uses Hugging Face Transformers and PyTorch for NLP tasks such as text summarization, classification, or generation.
 * Required NLTK datasets can be installed by running the following in a Python shell or notebook:
 
-
+```python
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
-
-
+```
 
 ---
 
