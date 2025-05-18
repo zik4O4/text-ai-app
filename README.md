@@ -64,7 +64,7 @@ python model_trainer.py
 
 The pre-trained model files (~1GB) are available here:
 
-[Download models from Google Drive](https://drive.google.com/your-shared-link)
+[Download models from Google Drive](https://drive.google.com/drive/folders/1kAg0OC9PlwAYGyQW9_Ua0DsMcUX7Nzeb?usp=sharing)
 
 ### Instructions
 
