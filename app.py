@@ -1,101 +1,127 @@
 import os
 import streamlit as st
-from transformers import pipeline
+from transformers import pipeline, MarianMTModel, MarianTokenizer
 import torch
-import gdown
 
 @st.cache_resource
 def load_models():
     # Define model directories
-    base_dir = "./models"
-    classifier_dir = os.path.join(base_dir, "classification")
-    summarizer_dir = os.path.join(base_dir, "summarization")
-    generation_dir = os.path.join(base_dir, "generation")
+    classifier_dir = "./models/classification"
+    summarizer_dir = "./models/summarization"
+    generation_dir = "./models/generation"
+    
+    # Choose a specific MarianMT model from Hugging Face
+    translation_model_name = "Helsinki-NLP/opus-mt-en-fr"  # English to French translation
+    
+    # Check if local directories exist
+    for d, name in zip([classifier_dir, summarizer_dir, generation_dir], 
+                     ["classification", "summarization", "generation"]):
+        if not os.path.exists(d):
+            st.error(f"Model directory not found: {d}")
+            return None, None, None, None
 
-    # Google Drive file IDs
-    gdrive_links = {
-        "classification": "1vcsMiMTh3BiRzvIgtu4BlUyUuvLjSqdL",
-        "summarization": "1kL5XsOHc4rxC8psh4kVoZkSnzTUM7NPH",
-        "generation": "1pbo8sOWlSukxKqCKrDC7b4k1R4nnhEro"
-    }
-
-    os.makedirs(base_dir, exist_ok=True)
-
-    # Download models if missing
-    for model_type, folder in zip(["classification", "summarization", "generation"],
-                                  [classifier_dir, summarizer_dir, generation_dir]):
-        if not os.path.exists(folder):
-            st.info(f"Downloading {model_type} model...")
-            gdown.download_folder(f"https://drive.google.com/drive/folders/{gdrive_links[model_type]}", output=folder, quiet=False, use_cookies=False)
-
-    # Load MarianMT model from Hugging Face (EN to FR)
-    translation_model_name = "Helsinki-NLP/opus-mt-en-fr"
-
+    # Determine device
     device = 0 if torch.cuda.is_available() else -1
 
-    try:
-        classifier = pipeline("text-classification", model=classifier_dir, tokenizer=classifier_dir, device=device)
-    except:
-        classifier = None
+    # Load classification pipeline
+    classifier = pipeline(
+        "text-classification",
+        model=classifier_dir,
+        tokenizer=classifier_dir,
+        device=device
+    )
 
-    try:
-        summarizer = pipeline("summarization", model=summarizer_dir, tokenizer=summarizer_dir, device=device)
-    except:
-        summarizer = None
+    # Load summarization pipeline
+    summarizer = pipeline(
+        "summarization",
+        model=summarizer_dir,
+        tokenizer=summarizer_dir,
+        device=device
+    )
 
+    # Load translation pipeline using a pre-trained model from Hugging Face
     try:
-        generator = pipeline("text-generation", model=generation_dir, tokenizer=generation_dir, device=device)
-    except:
-        generator = None
-
-    try:
-        translator = pipeline("translation_en_to_fr", model=translation_model_name, tokenizer=translation_model_name, device=device)
-    except:
+        translator = pipeline(
+            "translation",
+            model=translation_model_name,
+            device=device
+        )
+    except Exception as e:
+        st.error(f"Failed to load translation model: {e}")
         translator = None
+
+    # Load text generation pipeline
+    generator = pipeline(
+        "text-generation",
+        model=generation_dir,
+        tokenizer=generation_dir,
+        device=device
+    )
 
     return classifier, summarizer, translator, generator
 
+
 classifier, summarizer, translator, generator = load_models()
 
-# Check for loaded models
-tasks = {
-    "Classification": classifier,
-    "Summarization": summarizer,
-    "Translation (EN → FR)": translator,
-    "Text Generation": generator
-}
+# Check if any model failed to load
+failed_models = []
+if classifier is None: failed_models.append("Classification")
+if summarizer is None: failed_models.append("Summarization")
+if translator is None: failed_models.append("Translation")
+if generator is None: failed_models.append("Text Generation")
 
-available_tasks = [name for name, model in tasks.items() if model is not None]
+if failed_models:
+    st.warning(f"Some models failed to load: {', '.join(failed_models)}")
+    st.info("You can still use the available models.")
+    available_tasks = ["Classification", "Summarization", "Translation", "Text Generation"]
+    available_tasks = [task for task, model in zip(available_tasks, [classifier, summarizer, translator, generator]) if model is not None]
+else:
+    available_tasks = ["Classification", "Summarization", "Translation", "Text Generation"]
 
-if not available_tasks:
-    st.error("No models could be loaded.")
+if len(available_tasks) == 0:
+    st.error("No models were loaded successfully. Please check your model directories.")
     st.stop()
 
-st.title("NLP Pipeline App")
+st.title("ZY ")
 
 task = st.selectbox("Choose an NLP task", available_tasks)
-text = st.text_area("Enter your text here", height=200)
 
-if st.button("Run") and text.strip():
-    with st.spinner(f"Running {task}..."):
-        if task == "Classification":
-            result = tasks[task](text)[0]
-            st.success(f"Label: {result['label']} (Confidence: {result['score']:.2f})")
+input_text = st.text_area("Enter text here:", height=200)
 
-        elif task == "Summarization":
-            summary = tasks[task](text, max_length=100, min_length=30, do_sample=False)[0]['summary_text']
-            st.success("Summary:")
-            st.write(summary)
+if st.button("Run"):
+    if not input_text.strip():
+        st.warning("Please enter some text.")
+    else:
+        with st.spinner(f"Running {task}..."):
+            try:
+                if task == "Classification" and classifier is not None:
+                    outputs = classifier(input_text)
+                    label = outputs[0]['label']
+                    score = outputs[0]['score']
+                    st.success(f"Prediction: **{label}** (confidence: {score:.2f})")
 
-        elif task == "Translation (EN → FR)":
-            translation = tasks[task](text)[0]['translation_text']
-            st.success("Translation:")
-            st.write(translation)
+                elif task == "Summarization" and summarizer is not None:
+                    if len(input_text.split()) < 10:
+                        st.warning("Summarization works best for texts longer than 10 words.")
+                    else:
+                        summary = summarizer(input_text, max_length=100, min_length=30, do_sample=False)[0]['summary_text']
+                        st.success("Summary:")
+                        st.write(summary)
 
-        elif task == "Text Generation":
-            output = tasks[task](text, max_length=100, num_return_sequences=1)[0]['generated_text']
-            st.success("Generated Text:")
-            st.write(output)
-else:
-    if not text.strip():
-        st.info("Please enter some text.")
+                elif task == "Translation" and translator is not None:
+                    translation = translator(input_text)[0]['translation_text']
+                    st.success("Translation:")
+                    st.write(translation)
+
+                elif task == "Text Generation" and generator is not None:
+                    result = generator(input_text, max_length=100, num_return_sequences=1, do_sample=True, temperature=0.7)[0]['generated_text']
+                    # Strip prompt prefix if present
+                    if result.startswith(input_text):
+                        result = result[len(input_text):].strip()
+                    st.success("Generated Text:")
+                    st.write(result)
+
+            except Exception as e:
+                st.error(f"Error during {task}: {e}")
+                import traceback
+                st.code(traceback.format_exc(), language="python")
