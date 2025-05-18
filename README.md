@@ -56,13 +56,13 @@ jupyter notebook model_trainer.ipynb
 python model_trainer.py
 ```
 
-> **Note:** Training can be time-consuming. raw dataset file and Pre-trained models are available for download (see below).
+> **Note:** Training can be time-consuming. raw dataset files and Pre-trained models are available for download (see below).
 
 ---
 
 ## Download Pre-trained Models
 
-The pre-trained model files (~1GB) are available here:
+The raw dataset files and pre-trained model files (~1GB) are available here:
 
 [Download models from Google Drive](https://drive.google.com/drive/folders/1kAg0OC9PlwAYGyQW9_Ua0DsMcUX7Nzeb?usp=sharing)
 
