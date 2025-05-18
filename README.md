@@ -24,7 +24,7 @@ project-root/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/zik4O4/text-ai-app/.git
+git clone https://github.com/text-ai-app/.git
 cd your-repo-name
 ````
 
