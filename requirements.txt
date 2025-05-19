@@ -12,5 +12,5 @@ rouge-score
 nltk
 tqdm
 huggingface_hub
-sentencepiece==0.1.99
+
 
