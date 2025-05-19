@@ -11,6 +11,6 @@ gdown
 rouge-score
 nltk
 tqdm
-huggingface_hub[hf_xla]
+huggingface_hub
 sentencepiece==0.1.99
 
