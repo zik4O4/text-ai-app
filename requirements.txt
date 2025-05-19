@@ -12,4 +12,5 @@ rouge-score
 nltk
 tqdm
 huggingface_hub[hf_xla]
-sentencepiece
+sentencepiece==0.1.99
+
