@@ -1,9 +1,13 @@
+import streamlit as st
+from transformers import pipeline
+import torch
+
 @st.cache_resource
 def load_models():
     # Hugging Face model IDs
-    classifier_id = get_model_id("CLASSIFIER_MODEL", "distilbert-base-uncased-finetuned-sst-2-english")
-    summarizer_id = get_model_id("SUMMARIZER_MODEL", "facebook/bart-large-cnn")
-    generation_id = get_model_id("GENERATOR_MODEL", "gpt2")
+    classifier_id = "ZIKO404/classification-model"
+    summarizer_id = "ZIKO404/summarization-model"
+    generation_id = "ZIKO404/generation-model"
     translation_id = "Helsinki-NLP/opus-mt-en-fr"
 
     device = 0 if torch.cuda.is_available() else -1
@@ -83,4 +87,3 @@ if st.button("Run"):
 
             except Exception as e:
                 st.error(f"Error during {task}: {e}")
-
