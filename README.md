@@ -118,6 +118,5 @@ nltk.download('stopwords')
 
 BEN KASSI ZAKARIYA— [zakariya.benkassi@gmail.com]
 YOUSSEF MONIR IDRESSI [ youssefmouniridrissi04@gmail.com ]
-Project Link: [https://github.com/your-username/your-repo-name]
 
 
