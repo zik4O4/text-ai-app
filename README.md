@@ -3,6 +3,7 @@
 This project demonstrates an end-to-end deep learning pipeline for text processing using NLP techniques. It includes data processing, model training, and deployment of the trained model via a Streamlit web app.
 
 ---
+<img width="848" height="663" alt="Screenshot 2026-03-29 at 00 51 08" src="https://github.com/user-attachments/assets/f27d2067-306f-4a38-ad6c-1be41401e530" />
 
 ## Project Structure
 ```
