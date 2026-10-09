@@ -1,123 +1,83 @@
-# End-to-End NLP text-ia-app with Streamlit Deployment
+# NLP Studio
 
-This project demonstrates an end-to-end deep learning pipeline for text processing using NLP techniques. It includes data processing, model training, and deployment of the trained model via a Streamlit web app.
+A Streamlit application for text classification, summarization, English-to-French translation and text generation, supported by data preparation and model-training notebooks.
 
----
-<img width="848" height="663" alt="Screenshot 2026-03-29 at 00 51 08" src="https://github.com/user-attachments/assets/f27d2067-306f-4a38-ad6c-1be41401e530" />
+## Problem and solution
 
-## Project Structure
-```
+NLP Studio brings several text-processing tasks into one interface. PyTorch and Hugging Face Transformers handle inference, while the notebooks provide dataset preparation and training code. Three local model folders are required before the app can start; trained weights are not committed here.
 
-project-root/
-├── app.py                   # Streamlit app
-├── data_processor.ipynb     # Notebook to process and prepare data
-├── model_trainer.ipynb      # Notebook to train the model
-├── requirements.txt         # Python dependencies
-├── README.md                # This file
-├── data/                    # Folder containing raw dataset files (not included in repo)
-└── models/                  # Folder containing pre-trained model files (not included in repo)
+## Architecture and technologies
 
-````
----
+| File | Role |
+|---|---|
+| `data_processor.ipynb` | Prepare IMDb classification, CNN/DailyMail summarization and WMT16 German-to-English translation data |
+| `model_trainer.ipynb` | DistilBERT classification, T5 summarization/translation training and pretrained GPT-2 setup |
+| `app.py` | Load models and present four inference tasks using Streamlit |
+| `requirements.txt` | Python dependencies |
 
-## Setup Instructions
+**Stack:** Python, PyTorch, Transformers, Hugging Face datasets, Streamlit, pandas, scikit-learn, NLTK and ROUGE evaluation utilities.
 
-1. **Clone the repository**
+## Installation
 
 ```bash
-git clone https://github.com/text-ai-app/.git
-cd your-repo-name
-````
-
-2. **Install dependencies**
-
-```bash
-pip install -r requirements.txt
-````
-
-3. **Prepare the data**
-
-Run the data processing notebook or script to prepare the dataset:
-
-```bash
-# Option 1: Run the Jupyter notebook interactively
-jupyter notebook data_processor.ipynb
-
-# Option 2: Run the Python script (if available)
-python data_processor.py
+git clone https://github.com/zik4O4/text-ai-app.git
+cd text-ai-app
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pip install jupyter sentencepiece
 ```
 
-4. **Train the model (optional)**
+The devcontainer specifies Python 3.11. On Windows, activate `.venv\Scripts\Activate.ps1`. Package versions are not locked; compatibility with model/tokenizer files must be validated in your environment. GPU acceleration is optional for inference; training is substantially more expensive on CPU.
 
-If you want to train the model yourself, run the training notebook or script:
+## Model requirements
 
-```bash
-jupyter notebook model_trainer.ipynb
-# or
-python model_trainer.py
+Provide these directories at the repository root:
+
+```text
+models/
+  classification/
+  summarization/
+  generation/
 ```
 
-> **Note:** Training can be time-consuming. raw dataset files and Pre-trained models are available for download (see below).
+Each folder must contain model weights, configuration and tokenizer files in a format accepted by Transformers. If any folder is missing, the app stops before exposing its tasks, including translation. English-to-French translation uses `Helsinki-NLP/opus-mt-en-fr` and requires a first-run download.
 
----
+The project's existing [external model/data folder](https://drive.google.com/drive/folders/1kAg0OC9PlwAYGyQW9_Ua0DsMcUX7Nzeb?usp=sharing) is retained as a reference. Its availability and contents have not been independently verified. Check access, files and licensing before relying on it.
 
-## Download Pre-trained Models
-
-The raw dataset files and pre-trained model files (~1GB) are available here:
-
-[Download models from Google Drive](https://drive.google.com/drive/folders/1kAg0OC9PlwAYGyQW9_Ua0DsMcUX7Nzeb?usp=sharing)
-
-### Instructions
-
-1. Download and extract the models folder to the root directory of the project.
-2. Ensure the folder structure looks like:
-
-```
-project-root/
-├── app.py
-├── models/
-│   ├── classification
-│       ├── config.json
-│       ├── pytorch_model.bin
-│       └── ...
-│  ├──generation
-│     ├── config.json
-│     ├── pytorch_model.bin
-│     └── ...
-│  └── ... 
-│   
-```
-
----
-
-## Running the Streamlit App
-
-Once dependencies are installed and models are in place, start the app with:
+## Usage
 
 ```bash
 streamlit run app.py
 ```
 
-Open your browser to the local URL provided to interact with the app.
+Choose a task, enter text and start processing. Summarization requires at least ten words. Generation samples a continuation; outputs are model predictions, not factual guarantees.
 
----
+For the notebook workflow:
 
-## Additional Notes
-
-* The project uses Hugging Face Transformers and PyTorch for NLP tasks such as text summarization, classification, or generation.
-* Required NLTK datasets can be installed by running the following in a Python shell or notebook:
-
-```python
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+```bash
+jupyter notebook data_processor.ipynb
+jupyter notebook model_trainer.ipynb
 ```
 
----
+Run from the repository root so generated `data/` and `models/` paths align with the app. Inspect dataset download and training settings before executing all cells. The preparation notebook writes task-specific training/validation CSVs used by the trainer. There are no standalone `data_processor.py` or `model_trainer.py` scripts in this snapshot.
 
-## Contact
+## Existing interface screenshot
 
-BEN KASSI ZAKARIYA— [zakariya.benkassi@gmail.com]
-YOUSSEF MONIR IDRESSI [ youssefmouniridrissi04@gmail.com ]
+<img width="848" height="663" alt="Existing NLP Studio interface screenshot" src="https://github.com/user-attachments/assets/f27d2067-306f-4a38-ad6c-1be41401e530" />
 
+## Limitations
 
+- The training notebook's default translation data are German-to-English; the app uses a separate English-to-French pretrained model.
+- GPT-2 generation is configured from pretrained weights, rather than demonstrated custom generation fine-tuning.
+- Model artifacts and datasets require external downloads; a clean clone alone is insufficient for inference.
+- No reproducible accuracy, latency or deployment benchmark is claimed here.
+
+## Authors and license
+
+Zakariya Ben Kassi and Youssef Monir Idrissi. Original contact information is retained below for attribution:
+
+- BEN KASSI ZAKARIYA: zakariya.benkassi@gmail.com
+- YOUSSEF MONIR IDRESSI: youssefmouniridrissi04@gmail.com
+
+No repository-level license has been selected. Dataset and pretrained-model terms apply separately.
